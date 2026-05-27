@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instruments Gallery - Swaranjali</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">Swaranjali</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="instruments.html" class="active">Instruments</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="orders.html">Orders</a></li>
+    </ul>
+    <div class="nav-buttons"><button class="theme-btn">🌙</button><button class="menu-toggle">☰</button></div>
+  </nav>
+
+  <section class="section">
+    <h2 class="heading-center">The Classical Encyclopedia</h2>
+    
+    <div class="controls-panel">
+      <input type="text" id="searchBar" class="search-input" placeholder="Search instruments by name...">
+      <select id="categoryFilter" class="filter-select">
+        <option value="">All Families</option>
+        <option value="String">String (Tata Vadya)</option>
+        <option value="Percussion">Percussion (Avanaddha Vadya)</option>
+        <option value="Wind">Wind (Sushira Vadya)</option>
+        <option value="Keyboard">Keyboard</option>
+      </select>
+      <select id="priceSort" class="filter-select">
+        <option value="">Sort Price</option>
+        <option value="low">Low to High</option>
+        <option value="high">High to Low</option>
+      </select>
+    </div>
+
+    <div class="grid" id="products-grid"></div>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
