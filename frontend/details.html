@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instrument Documentation Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .details-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 2rem; align-items: start; }
+    @media(max-width: 800px) { .details-layout { grid-template-columns: 1fr; gap: 2rem; } }
+    .details-img { width: 100%; height: auto; border-radius: 16px; box-shadow: var(--shadow); object-fit: cover; }
+    .meta-box { background: var(--glass); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 12px; margin-top: 1.5rem; }
+    .meta-item { margin-bottom: 1.5rem; line-height: 1.6; }
+    .meta-title { font-weight: bold; color: var(--accent); display: block; font-size: 1.1rem; margin-bottom: 0.25rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">Swaranjali</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="instruments.html" class="active">Instruments</a></li>
+      <li><a href="shop.html">Shop</a></li>
+    </ul>
+  </nav>
+
+  <section class="section">
+    <a href="instruments.html" style="text-decoration:none; color:var(--primary); font-weight:bold;">&larr; Back to Heritage Index</a>
+    
+    <div class="details-layout" id="details-view-container">
+      </div>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
