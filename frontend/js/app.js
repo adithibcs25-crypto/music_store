@@ -1,14 +1,15 @@
 const API_URL = 'http://localhost:5000/api';
-const DEFAULT_USER_ID = 1; // Simulated authentication flow context
+const DEFAULT_USER_ID = 1; // Simulated authentication context
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initMobileNav();
   setupGlobalAudioEngine();
   
+  // Identify the active view context
   const page = window.location.pathname.split("/").pop();
   if (page === 'index.html' || page === '') loadFeaturedProducts();
-  if (page === 'instruments.html') loadInstrumentsView(true);
+  if (page === 'instruments.html') loadInstrumentsView(true); // true activate detailed encyclopedia design
   if (page === 'shop.html') loadInstrumentsView(false);
   if (page === 'cart.html') renderCartView();
   if (page === 'payment.html') handleCheckoutFlow();
@@ -32,6 +33,7 @@ function initTheme() {
   });
 }
 
+/* Mobile Responsiveness Drawer Toggle */
 function initMobileNav() {
   const toggle = document.querySelector('.menu-toggle');
   const links = document.querySelector('.nav-links');
@@ -47,7 +49,7 @@ function setupGlobalAudioEngine() {
     if (activeAudio && activeAudio.src === url) {
       if (!activeAudio.paused) {
         activeAudio.pause();
-        button.innerText = '🎵 Play Sound';
+        button.innerText = '🎵 Play Sound Sample';
         return;
       } else {
         activeAudio.play();
@@ -55,10 +57,16 @@ function setupGlobalAudioEngine() {
         return;
       }
     }
-    if (activeAudio) { activeAudio.pause(); document.querySelectorAll('.btn-preview').forEach(b => b.innerText = '🎵 Play Sound'); }
+    if (activeAudio) { 
+      activeAudio.pause(); 
+      document.querySelectorAll('.btn-preview').forEach(b => b.innerText = '🎵 Play Sound Sample'); 
+    }
     activeAudio = new Audio(url);
-    activeAudio.play().then(() => { button.innerText = '⏸️ Pause'; }).catch(() => showToast('Audio file failed to load.'));
-    activeAudio.onended = () => { button.innerText = '🎵 Play Sound'; };
+    activeAudio.play()
+      .then(() => { button.innerText = '⏸️ Pause'; })
+      .catch(() => showToast('Audio track failed to initialize. Check network link.'));
+    
+    activeAudio.onended = () => { button.innerText = '🎵 Play Sound Sample'; };
   };
 }
 
@@ -77,13 +85,13 @@ function showToast(message) {
   setTimeout(() => toast.remove(), 3000);
 }
 
-/* Product Loading & State Handling Rules */
+/* API Synchronizer & Card Layout Pipeline */
 async function fetchProducts() {
   try {
     const res = await fetch(`${API_URL}/products`);
     return await res.json();
   } catch (err) {
-    showToast("Error establishing sync with server backend.");
+    showToast("Error establishing background sync with server backend.");
     return [];
   }
 }
@@ -100,32 +108,48 @@ async function loadInstrumentsView(includeMetadata = false) {
   if (!grid) return;
   const products = await fetchProducts();
   
-  window.allProductsData = products; // Memory local storage assignment for sorting/filtering runtime
+  window.allProductsData = products; 
   renderFilteredGrid(products, includeMetadata);
 
-  // Setup Event Bindings
-  document.getElementById('searchBar')?.addEventListener('input', (e) => filterProducts(includeMetadata));
-  document.getElementById('categoryFilter')?.addEventListener('change', (e) => filterProducts(includeMetadata));
-  document.getElementById('priceSort')?.addEventListener('change', (e) => filterProducts(includeMetadata));
+  // Setup Live Interaction Event Listeners
+  document.getElementById('searchBar')?.addEventListener('input', () => filterProducts(includeMetadata));
+  document.getElementById('categoryFilter')?.addEventListener('change', () => filterProducts(includeMetadata));
+  document.getElementById('priceSort')?.addEventListener('change', () => filterProducts(includeMetadata));
 }
 
 function createProductCardElement(p, detailed = false) {
+  // Conditional UI Architecture: Omit Buy Now controls when viewing the detailed showcase
+  const actionButtons = detailed 
+    ? `<button class="btn-primary" style="width:100%;" onclick="addToCart(${p.id}, '${p.name}', ${p.price}, '${p.image}')">Add To Cart</button>`
+    : `<button class="btn-primary" onclick="addToCart(${p.id}, '${p.name}', ${p.price}, '${p.image}')">Add To Cart</button>
+       <button class="btn-secondary" onclick="buyNow(${p.id}, '${p.name}', ${p.price}, '${p.image}')">Buy Now</button>`;
+
   return `
-    <div class="card">
+    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
       <div class="card-img-container">
         <img src="${p.image}" alt="${p.name}">
       </div>
-      <div class="card-body">
-        <span class="logo" style="font-size:0.8rem; color:var(--accent);">${p.category}</span>
-        <h3 class="card-title">${p.name}</h3>
-        ${detailed ? `<p style="font-size:0.9rem; margin-bottom:0.5rem; opacity:0.8;"><b>Origin:</b> ${p.history}</p>` : ''}
-        ${detailed ? `<p style="font-size:0.9rem; margin-bottom:0.5rem; opacity:0.8;"><b>Acoustics:</b> ${p.characteristics}</p>` : ''}
-        <p style="font-size:0.9rem; margin-bottom:1rem; opacity:0.9;">${p.description}</p>
-        <div class="card-price">₹${parseFloat(p.price).toLocaleString('en-IN')}</div>
-        <button class="btn-primary btn-preview" onclick="toggleSoundPreview('${p.sound_url}', this)">🎵 Play Sound</button>
-        <div class="card-actions">
-          <button class="btn-primary" onclick="addToCart(${p.id}, '${p.name}', ${p.price}, '${p.image}')">Add To Cart</button>
-          <button class="btn-secondary" onclick="buyNow(${p.id}, '${p.name}', ${p.price}, '${p.image}')">Buy Now</button>
+      <div class="card-body" style="display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;">
+        <div>
+          <span class="logo" style="font-size:0.8rem; color:var(--accent); display:block; margin-bottom:0.25rem;">${p.category}</span>
+          <h3 class="card-title" style="margin-bottom: 0.75rem;">${p.name}</h3>
+          
+          ${detailed ? `
+            <div class="instrument-info-block" style="background: rgba(0,0,0,0.03); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem;">
+              <p style="margin-bottom: 0.5rem; line-height: 1.4;"><b>📜 Origin & History:</b> ${p.history || 'Traditional Indian Classical Heritage.'}</p>
+              <p style="line-height: 1.4;"><b>🎵 Sound Acoustics:</b> ${p.characteristics || 'Rich traditional resonant overtones.'}</p>
+            </div>
+          ` : ''}
+          
+          <p style="font-size:0.9rem; margin-bottom:1.25rem; opacity:0.9; line-height: 1.4;">${p.description}</p>
+        </div>
+        
+        <div>
+          <div class="card-price" style="margin-bottom: 1rem;">₹${parseFloat(p.price).toLocaleString('en-IN')}</div>
+          <button class="btn-primary btn-preview" style="width: 100%; margin-bottom: 0.75rem;" onclick="toggleSoundPreview('${p.sound_url}', this)">🎵 Play Sound Sample</button>
+          <div class="card-actions">
+            ${actionButtons}
+          </div>
         </div>
       </div>
     </div>
@@ -152,14 +176,14 @@ function renderFilteredGrid(data, includeMetadata) {
   grid.innerHTML = data.map(p => createProductCardElement(p, includeMetadata)).join('');
 }
 
-/* Local Cart Engineering & Core Storage Engine Context */
+/* Local Cart Engineering Storage Controllers */
 window.addToCart = function(id, name, price, image) {
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
   const matches = cart.find(item => item.id === id);
   if(matches) { matches.quantity += 1; } 
   else { cart.push({ id, name, price, image, quantity: 1 }); }
   localStorage.setItem('cart', JSON.stringify(cart));
-  showToast(`${name} added directly to Cart!`);
+  showToast(`${name} added successfully to your Cart!`);
 };
 
 window.buyNow = function(id, name, price, image) {
@@ -198,13 +222,13 @@ function renderCartView() {
     `;
   }).join('');
 
-  let gst = subtotal * 0.18; // Standardized GST processing calculations
+  let gst = subtotal * 0.18; 
   let grandTotal = subtotal + gst;
 
   wrapper.innerHTML = `
     <div class="cart-container">
       <div>${itemsHtml}</div>
-      <div class="card data-theme-card" style="padding:2rem; height: fit-content;">
+      <div class="card" style="padding:2rem; height: fit-content;">
         <h3>Order Summary</h3><br>
         <p>Subtotal: <span style="float:right;">₹${subtotal.toLocaleString('en-IN')}</span></p><br>
         <p>GST (18%): <span style="float:right;">₹${gst.toLocaleString('en-IN')}</span></p><hr style="margin:1rem 0; border:1px solid var(--glass-border);">
@@ -238,7 +262,7 @@ window.proceedToCheckout = function(grandTotal) {
   window.location.href = 'payment.html';
 };
 
-/* Payment Pipeline processing & Animations Gateway routing mapping */
+/* Payment Gateways Management & Order Placement */
 function handleCheckoutFlow() {
   const form = document.getElementById('payment-form');
   if(!form) return;
@@ -248,7 +272,6 @@ function handleCheckoutFlow() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // UI Loading Animation State Switch
     const payBtn = document.getElementById('pay-btn');
     payBtn.innerText = "Processing Transaction Securely...";
     payBtn.disabled = true;
@@ -257,7 +280,6 @@ function handleCheckoutFlow() {
     const cart = JSON.parse(localStorage.getItem('cart'));
     const total = localStorage.getItem('checkout_total');
 
-    // Mock Payload Compilation Context
     const payload = {
       user_id: DEFAULT_USER_ID,
       total_amount: total,
@@ -285,26 +307,26 @@ function handleCheckoutFlow() {
           window.location.href = 'thankyou.html';
         }
       } catch (err) {
-        showToast("Order transaction verification failure error.");
+        showToast("Order routing validation error.");
         payBtn.innerText = "Place Order";
         payBtn.disabled = false;
       }
-    }, 2000); // 2 second operational delay for loading animation effect
+    }, 2000); 
   });
 }
 
-/* History Logs Parsing Rendering logic block mapping array values elements */
+/* History Logs Query Renderers */
 async function renderOrdersHistory() {
   const container = document.getElementById('orders-container');
   if(!container) return;
   
-  container.innerHTML = "<h3>Loading order historical metrics...</h3>";
+  container.innerHTML = "<h3>Loading order metric history...</h3>";
   try {
     const res = await fetch(`${API_URL}/orders`);
     const orders = await res.json();
     
     if(orders.length === 0) {
-      container.innerHTML = "<p>No orders matched your historical record profiles.</p>";
+      container.innerHTML = "<p>No orders matched your profile log records.</p>";
       return;
     }
 
@@ -329,7 +351,7 @@ async function renderOrdersHistory() {
         </div>
       </div>
     `).join('');
-  } catch (err) { container.innerHTML = "<p>Error loading transaction dashboard.</p>"; }
+  } catch (err) { container.innerHTML = "<p>Error loading personal user dashboard history.</p>"; }
 }
 
 function renderInvoiceDetails() {
