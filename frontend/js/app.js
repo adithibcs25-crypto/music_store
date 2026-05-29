@@ -46,7 +46,7 @@ function setupGlobalAudioEngine() {
     }
     if (activeAudio) { activeAudio.pause(); document.querySelectorAll('.btn-preview-audio').forEach(b => b.innerText = '🔊 Listen Tonal Preview'); }
     activeAudio = new Audio(url);
-    activeAudio.play().then(() => { button.innerText = '⏸️ Stop Audio'; }).catch(() => alert('Audio stream link configuration error.'));
+    activeAudio.play().then(() => { button.innerText = '⏸️ Stop Audio'; }).catch(() => alert('Audio file link is offline.'));
     activeAudio.onended = () => { button.innerText = '🔊 Listen Tonal Preview'; };
   };
 }
@@ -58,7 +58,7 @@ async function fetchProducts() {
   } catch (err) { return []; }
 }
 
-/* Home Section: Clicking Masterpiece card navigates user directly to Retail Purchase Marketplace */
+/* Masterpieces: Clicking redirects directly to the store layout */
 async function loadFeaturedProducts() {
   const grid = document.getElementById('featured-grid');
   if (!grid) return;
@@ -138,7 +138,7 @@ window.addToCart = function(id, name, price, image) {
   if(matches) { matches.quantity += 1; } 
   else { cart.push({ id, name, price, image, quantity: 1 }); }
   localStorage.setItem('cart', JSON.stringify(cart));
-  alert(`${name} successfully registered into your selection Cart!`);
+  alert(`${name} added to cart!`);
 };
 
 window.buyNow = function(id, name, price, image) {
@@ -146,14 +146,13 @@ window.buyNow = function(id, name, price, image) {
   window.location.href = 'cart.html';
 };
 
-/* Cart View Engine featuring direct, clean removal capability rules */
 function renderCartView() {
   const wrapper = document.getElementById('cart-wrapper');
   if(!wrapper) return;
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
   
   if(cart.length === 0) {
-    wrapper.innerHTML = `<h2>Your shopping selection bag is completely empty.</h2><br><a href="shop.html" class="btn-primary">Browse Shop</a>`;
+    wrapper.innerHTML = `<h2>Your cart is completely empty.</h2><br><a href="shop.html" class="btn-primary">Browse Shop</a>`;
     return;
   }
 
@@ -182,10 +181,10 @@ function renderCartView() {
       <div>${itemsHtml}</div>
       <div class="card" style="padding:2rem; height: fit-content; margin-top:2rem;">
         <h3>Order Balance Summary</h3><br>
-        <p>Base Pricing Total: <span style="float:right;">₹${subtotal.toLocaleString('en-IN')}</span></p><br>
-        <p>Statutory GST (18%): <span style="float:right;">₹${gst.toLocaleString('en-IN')}</span></p><hr style="margin:1rem 0; border:1px solid var(--glass-border);">
+        <p>Base Total: <span style="float:right;">₹${subtotal.toLocaleString('en-IN')}</span></p><br>
+        <p>GST (18%): <span style="float:right;">₹${gst.toLocaleString('en-IN')}</span></p><hr style="margin:1rem 0; border:1px solid var(--glass-border);">
         <h4>Grand Net Payable: <span style="float:right; color:var(--primary);">₹${grandTotal.toLocaleString('en-IN')}</span></h4><br>
-        <button class="btn-primary" style="width:100%;" onclick="localStorage.setItem('checkout_total', ${grandTotal}); window.location.href='payment.html'">Proceed to Payment Checkout</button>
+        <button class="btn-primary" style="width:100%;" onclick="localStorage.setItem('checkout_total', ${grandTotal}); window.location.href='payment.html'">Proceed to Checkout</button>
       </div>
     </div>
   `;
@@ -239,28 +238,28 @@ function handleCheckoutFlow() {
         localStorage.removeItem('cart');
         window.location.href = 'thankyou.html';
       }
-    } catch (err) { alert("Checkout system failure exception."); }
+    } catch (err) { alert("Checkout gateway error."); }
   });
 }
 
-/* Orders Dashboard History Hydrator */
+/* Orders Dashboard History Logger Sync */
 async function renderOrdersHistory() {
   const container = document.getElementById('orders-container');
   if(!container) return;
   
-  container.innerHTML = "<h3>Syncing tracking metrics with master relational server database...</h3>";
+  container.innerHTML = "<h3>Syncing records with live SQL backend database...</h3>";
   try {
     const res = await fetch(`${API_URL}/orders`);
     const orders = await res.json();
     
-    if(orders.length === 0) { container.innerHTML = "<p>No transaction tickets recorded in this dashboard profile.</p>"; return; }
+    if(orders.length === 0) { container.innerHTML = "<p>No orders found for this profile row.</p>"; return; }
 
     container.innerHTML = orders.map(o => `
       <div class="card" style="padding:2rem; margin-bottom:2rem; width:100%;">
         <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--glass-border); padding-bottom:1rem; margin-bottom:1rem;">
-          <div><strong>Order Number ID:</strong> SWARANJALI-${o.id}</div>
+          <div><strong>Order System ID:</strong> SWARANJALI-${o.id}</div>
           <div><strong>Date:</strong> ${new Date(o.created_at).toLocaleDateString('en-IN')}</div>
-          <div><strong>Routing Status:</strong> <span style="color:green; font-weight:bold;">${o.order_status}</span></div>
+          <div><strong>Status:</strong> <span style="color:green; font-weight:bold;">${o.order_status}</span></div>
         </div>
         <div>
           ${o.items.map(i => `<p style="margin-bottom:0.5rem;">• ${i.name} (x${i.quantity}) - <span style="opacity:0.8;">Subtotal: ₹${parseFloat(i.subtotal).toLocaleString('en-IN')}</span></p>`).join('')}
@@ -268,10 +267,10 @@ async function renderOrdersHistory() {
         <div style="text-align:right; margin-top:1rem; font-size:1.1rem; font-weight:bold; color:var(--primary);">Net Disbursed: ₹${parseFloat(o.total_amount).toLocaleString('en-IN')}</div>
       </div>
     `).join('');
-  } catch (err) { container.innerHTML = "<p>Error rendering database historical data logs.</p>"; }
+  } catch (err) { container.innerHTML = "<p>Error loading transaction records from database.</p>"; }
 }
 
-/* Invoice Renderer using native window printing to generate PDFs without external library constraints */
+/* Print Window Interceptor generating high-fidelity local layout PDFs */
 function renderInvoiceDetails() {
   const data = JSON.parse(localStorage.getItem('last_order'));
   if(!data) return;
@@ -282,7 +281,7 @@ function renderInvoiceDetails() {
     
     let printableContent = `
       <div style="padding: 3rem; font-family: 'Segoe UI', sans-serif; color: #333; line-height: 1.6;">
-        <h1 style="color: #800020; font-family: Georgia, serif; text-align:center; border-bottom: 3px double #FF8C00; padding-bottom: 1rem;">OFFICIAL INVOICE RECEIPT</h1>
+        <h1 style="color: #800020; font-family: Georgia, serif; text-align:center; border-bottom: 3px double #FF8C00; padding-bottom: 1rem;">OFFICIAL SAPTASWARA INVOICE RECEIPT</h1>
         <p style="margin-top: 2rem;"><strong>Receipt ID reference:</strong> SWARANJALI-${data.order_id}</p>
         <p><strong>Transaction Date Log:</strong> ${data.date}</p>
         <hr style="border: 0; border-top: 1px dashed #ccc; margin: 2rem 0;">
@@ -292,7 +291,7 @@ function renderInvoiceDetails() {
             <tr style="background: #f9f9f9; border-bottom: 2px solid #333;">
               <th style="padding: 0.5rem;">Instrument Model Description</th>
               <th style="padding: 0.5rem;">Quantity Purchased</th>
-              <th style="padding: 0.5rem; text-align: right;">Total Layout Outlay Balance</th>
+              <th style="padding: 0.5rem; text-align: right;">Total Outlay Balance</th>
             </tr>
           </thead>
           <tbody>
@@ -306,10 +305,10 @@ function renderInvoiceDetails() {
           </tbody>
         </table>
         <div style="text-align: right; margin-top: 3rem; font-size: 1.3rem; font-weight: bold; color: #800020;">
-          Net Certified Paid Amount (Inc. GST): ₹${parseFloat(data.total).toLocaleString('en-IN')}
+          Net Certified Paid Amount (Inc. 18% GST): ₹${parseFloat(data.total).toLocaleString('en-IN')}
         </div>
         <div style="margin-top: 5rem; text-align: center; font-size: 0.85rem; opacity: 0.7;">
-          Thank you for choosing Swaranjali, sustaining classical sound art preservation. This document acts as an authentic transaction verification.
+          Thank you for choosing Saptaswara, sustaining classical sound art preservation. This document acts as an authentic transaction verification.
         </div>
       </div>
     `;
@@ -317,7 +316,6 @@ function renderInvoiceDetails() {
     document.body.innerHTML = printableContent;
     window.print();
     
-    // Restore layout instantly upon printer pipeline suspension/completion
     document.body.innerHTML = originalBody;
     window.location.reload();
   };

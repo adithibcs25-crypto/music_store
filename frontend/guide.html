@@ -3,13 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Musical Instrument Buyer's Guide - Swaranjali</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Musical Instrument Buyer's Guide & Finder - Swaranjali</title>
+  <link rel="stylesheet" href="css/style.css">
   <style>
-    .guide-container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; }
+    .guide-container { max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--shadow); }
     .guide-block { margin-bottom: 3rem; line-height: 1.7; }
     .guide-block h3 { color: var(--primary); font-size: 1.6rem; margin-bottom: 1rem; font-family: Georgia, serif; }
     .guide-block ul { margin-left: 1.5rem; margin-top: 0.5rem; }
+    
+    /* Interactive Quiz Framework UI */
+    .quiz-box { background: rgba(0,0,0,0.02); padding: 1.5rem; border-radius: 8px; border: 1px dashed var(--accent); margin-bottom: 2rem; }
+    .quiz-question { font-weight: 600; margin-bottom: 1rem; color: var(--text-dark); }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .quiz-option-label { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 6px; cursor: pointer; transition: var(--transition); }
+    .quiz-option-label:hover { background: var(--bg-light); border-color: var(--accent); }
+    .quiz-btn { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: var(--transition); width: 100%; }
+    .quiz-btn:hover { background: #600018; }
+    .quiz-result { display: none; margin-top: 1.5rem; padding: 1rem; border-radius: 6px; text-align: center; font-weight: bold; font-size: 1.2rem; background: var(--primary); color: white; animation: fadeIn 0.5s ease; }
   </style>
 </head>
 <body>
@@ -19,35 +29,97 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="instruments.html">Instruments</a></li>
       <li><a href="shop.html">Shop</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="orders.html">Orders</a></li>
     </ul>
   </nav>
 
   <section class="section">
-    <h2 class="heading-center">Instrument Purchase Reference Guide</h2>
+    <h2 class="heading-center">Instrument Selection Guide & Finder</h2>
     
     <div class="guide-container">
+      
       <div class="guide-block">
-        <h3>How to Choose Your First Acoustic Guitar</h3>
-        <p>Selecting an initial guitar involves evaluating scale dimensions, comfortable neck depths, and timber characteristics:</p>
-        <ul>
-          <li><strong>Body Shape:</strong> Dreadnought form factors generate massive acoustic projection, while Concert variations suit smaller physical statures cleanly.</li>
-          <li><strong>Tonewood Profiles:</strong> Solid Spruce tops deliver exceptional bright resonance, whereas Mahogany frames provide rich, warm mid-range responses.</li>
-          <li><strong>Setup Check:</strong> Ensure low action height setups to prevent finger fatigue during initial practice cycles.</li>
-        </ul>
+        <h3>🎯 Find Your Ideal Swara (Instrument Finder Quiz)</h3>
+        <p style="margin-bottom: 1.5rem;">Unsure where to begin your journey? Answer these 3 simple questions to find the instrument that matches your musical soul.</p>
+        
+        <div class="quiz-box" id="instrument-quiz">
+          <form id="finder-quiz-form">
+            
+            <div class="quiz-question">1. What type of musical element draws your interest the most?</div>
+            <div class="quiz-options">
+              <label class="quiz-option-label"><input type="radio" name="q1" value="melody" required> Melodic, sweeping expressions and ragas</label>
+              <label class="quiz-option-label"><input type="radio" name="q1" value="rhythm"> Dynamic beats, complex timings, and cycles</label>
+              <label class="quiz-option-label"><input type="radio" name="q1" value="harmony"> Long sustained chords, background drones, and vocals</label>
+            </div>
+
+            <div class="quiz-question">2. How do you prefer to physically interact with an instrument?</div>
+            <div class="quiz-options">
+              <label class="quiz-option-label"><input type="radio" name="q2" value="strings" required> Plucking strings precisely with fingertips or picks</label>
+              <label class="quiz-option-label"><input type="radio" name="q2" value="percuss"> Striking drumheads with rhythmic palm and finger hits</label>
+              <label class="quiz-option-label"><input type="radio" name="q2" value="breath"> Using breath dynamics or operating keys and bellows</label>
+            </div>
+
+            <div class="quiz-question">3. What is your primary setting or musical environment goal?</div>
+            <div class="quiz-options">
+              <label class="quiz-option-label"><input type="radio" name="q3" value="solo" required> Meditative solo practice and deep personal focus</label>
+              <label class="quiz-option-label"><input type="radio" name="q3" value="ensemble"> Accompanying classical vocalists or driving ensemble percussion</label>
+            </div>
+
+            <button type="submit" class="quiz-btn">Analyze My Answers &rarr;</button>
+          </form>
+          
+          <div class="quiz-result" id="quiz-result-display"></div>
+        </div>
       </div>
 
       <div class="guide-block">
-        <h3>The Art of Evaluating Traditional Indian Instruments</h3>
+        <h3>The Art of Traditional Indian Instruments</h3>
         <p>Authentic classical musical instruments demand careful attention to structural aging, seasoning parameters, and structural integrity:</p>
         <ul>
           <li><strong>Sitar Inspections:</strong> Verify that the main soundboard gourd (Tumba) is structurally uniform and devoid of minor fractures. Opt for seasoned Burma Teak structures for stable microtonal configurations.</li>
           <li><strong>Tabla Tuning Stability:</strong> Select heavy, dark Sheesham hardwood variants for the treble drum (Dayan). The copper bass drum (Bayan) should offer substantial physical weight to support deep bass glides cleanly.</li>
           <li><strong>Bansuri Sizing:</strong> Beginner vocal accompanists generally find medium-sized flutes (such as E or G natural scales) optimal for finger spacing comfort.</li>
+          <li><strong>Harmonium Bellows:</strong> Look for multi-layered leather bellows that offer steady airflow control without leaking, ensuring consistent drone backing.</li>
         </ul>
       </div>
+
     </div>
   </section>
 
+  <script>
+    // Self-contained quiz engine logic
+    document.getElementById('finder-quiz-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const q1 = document.querySelector('input[name="q1"]:checked').value;
+      const q2 = document.querySelector('input[name="q2"]:checked').value;
+      const q3 = document.querySelector('input[name="q3"]:checked').value;
+      
+      let recommendation = "";
+      let description = "";
+
+      // Evaluation Routing Rule Matrices
+      if (q1 === "rhythm" || q2 === "percuss") {
+        recommendation = "Tabla or Ghatam";
+        description = "Your answers show a strong affinity for rhythm! You should look into percussion ensembles like a professional Sheesham Tabla Set or a clay Ghatam vessel.";
+      } else if (q1 === "melody" && q2 === "strings") {
+        recommendation = "Sitar or Veena";
+        description = "You lean deeply toward intricate microtonal melody lines. A beautiful Teakwood Sitar or classical Saraswati Veena fits you perfectly.";
+      } else if (q2 === "breath" && q3 === "solo") {
+        recommendation = "Bansuri (Flute)";
+        description = "You prefer a meditative, wind-driven approach to music. The deep, organic, ethereal tone of a premium Assamese Bamboo Bansuri matches your soul.";
+      } else {
+        recommendation = "Harmonium";
+        description = "You value supportive harmony and stable melodic accompaniment. A robust 3.5 Octave Double Bellow Brass Reed Harmonium is your best match.";
+      }
+
+      const resultBox = document.getElementById('quiz-result-display');
+      resultBox.innerHTML = `✨ Recommended: <strong>${recommendation}</strong><br><span style="font-size:0.95rem; display:block; margin-top:0.5rem; font-weight:normal; opacity:0.9;">${description}</span>`;
+      resultBox.style.display = "block";
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
   <script src="js/app.js"></script>
 </body>
 </html>
